@@ -1,0 +1,22 @@
+create 2 build order testing strategies that run using the same building blocks
+ - recursively create GameState objects and checks all possibilities and remembers the best
+ - recurse but don't create new objects each time, just wrap the recursive call in increment/decrement
+
+ find some way to reduce the paths checked
+ - check if you've been at a state before (with some rounding increasing as time goes up), if you have and the time is slower just stop that recursive call
+ - maybe building attacking units before more workers will never be optimal (eco phase, military phase)
+ - hardcode opening if build order is large? Reduces a lot of the useless paths.
+    - a few dif possible hardcoded openings to choose from, just pass in a GameState
+ - (stretch goal) potentially store an index in memory or on disk for the best way to get to a certain UnitCollection
+     - must be invalidated any time config changes (do a check of index on startup)
+
+ timeout after some given period of time, something like
+ try {
+     Reporter reporter = ...
+     BuildOrderGenerator generator = new SomeBuildOrderGenerator(Reporter)
+     generator.start()
+ } catch (InterruptedException e) {
+     reporter.summarize()
+ }
+
+TODO add test.json to git ignore along with intellij files
