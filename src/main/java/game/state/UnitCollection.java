@@ -22,7 +22,7 @@ public class UnitCollection {
         this.unitMap = new HashMap<>();
     }
 
-    public void addUnits(GameUnit gameUnit, int count) {
+    public void addUnit(GameUnit gameUnit, int count) {
         for (int i = 0; i < count; i++) {
             addUnit(gameUnit);
         }

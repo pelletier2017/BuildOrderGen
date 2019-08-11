@@ -1,6 +1,6 @@
 package generator;
 
-import buildorder.BuildOrder;
+import buildorder.ListBuildOrder;
 import game.cache.GameStateCache;
 import game.state.GameState;
 import game.state.UnitCollection;
@@ -10,31 +10,34 @@ import report.BuildOrderReporter;
 import java.util.List;
 
 public class BuildOrderGenerator {
-    private BuildOrder bestBuildOrder;
+    private ListBuildOrder bestBuildOrder;
     private GameState currentState;
-    private UnitCollection unitCollection;
+    private UnitCollection desiredUnitCollection;
+    private List<GameUnit> unitChoices;
     private GameStateCache gameStateCache;
 
     private BuildOrderReporter reporter;
 
-    public BuildOrderGenerator(GameState initialState, UnitCollection unitCollection, BuildOrderReporter reporter, GameStateCache gameStateCache) {
-        this.unitCollection = unitCollection;
+    public BuildOrderGenerator(GameState initialState, UnitCollection desiredUnitCollection, BuildOrderReporter reporter, GameStateCache gameStateCache) {
+        this.desiredUnitCollection = desiredUnitCollection;
+
         this.reporter = reporter;
         this.gameStateCache = gameStateCache;
         this.currentState = initialState;
+        //this.unitChoices = getThem();
 
         this.bestBuildOrder = null;
     }
 
-    public void generate(List<GameUnit> unitChoices) {
-        // TODO wrap this in try/catch InterruptedException and return bestBuildOrder?
+    public void generate() {
+        // TODO add check to see if time has passed time limit for program
 
         if (gameStateCache.contains(currentState)) {
             return;
         }
         gameStateCache.add(currentState);
 
-        if (currentState.satisfiesDesired(unitCollection)) {
+        if (currentState.satisfiesDesired(desiredUnitCollection)) {
             updateBestBuildOrder();
             return;
         }
@@ -42,14 +45,14 @@ public class BuildOrderGenerator {
         for (GameUnit gameUnit : unitChoices) {
             if (currentState.canAfford(gameUnit)) {
                 currentState.addUnit(gameUnit);
-                generate(unitChoices);
+                generate();
                 currentState.undoUnit(gameUnit);
             }
         }
     }
 
     private void updateBestBuildOrder() {
-        BuildOrder currentBuildOrder = currentState.buildOrder();
+        ListBuildOrder currentBuildOrder = currentState.buildOrder();
         if (currentBuildOrder.endsBefore(bestBuildOrder)) {
             bestBuildOrder = currentBuildOrder;
             reporter.report(bestBuildOrder);
