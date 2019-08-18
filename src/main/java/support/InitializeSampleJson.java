@@ -11,7 +11,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class InitializeJson {
+public class InitializeSampleJson {
     public static void main(String[] args) {
         ObjectMapper mapper = new ObjectMapper();
 

@@ -1,19 +1,24 @@
 package game.state;
 
-import buildorder.BuildOrder;
+import buildorder.ListBuildOrder;
 import game.stats.GameUnit;
+import game.units.ZergUnits;
 
 public class GameState {
 
     protected int secondsInGame;
     protected UnitCollection units;
 
-    private BuildOrder buildOrder;
+    private ListBuildOrder buildOrder;
+
+    public GameState(UnitCollection units) {
+        this(0, units);
+    }
 
     public GameState(int secondsInGame, UnitCollection units) {
         this.secondsInGame = secondsInGame;
         this.units = units;
-        this.buildOrder = new BuildOrder();
+        this.buildOrder = new ListBuildOrder();
     }
 
     public void addUnit(GameUnit gameUnit) {
@@ -49,7 +54,12 @@ public class GameState {
         return true;
     }
 
-    public BuildOrder buildOrder() {
+    public ListBuildOrder buildOrder() {
         return buildOrder;
+    }
+
+    public static GameState initialZerg() {
+        UnitCollection collection = ZergUnits.initialCollection();
+        return new GameState(collection);
     }
 }
