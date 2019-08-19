@@ -14,7 +14,7 @@ public class Cost {
     // default constructor for reading JSON
     private Cost() {}
 
-    public Cost(int minerals, int gas, int supply, String unitCreating, boolean willReturnUnitAfter) {
+    public Cost(int minerals, int gas, String unitCreating, boolean willReturnUnitAfter) {
         this.minerals = minerals;
         this.gas = gas;
         this.unitCreating = unitCreating;

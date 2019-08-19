@@ -5,13 +5,32 @@ public class Income {
     private int mineralPerSec;
     private int gasPerSec;
 
-    // default constructor for reading JSON
-    private Income() {}
+    public Income() {
+        this(0,0,0);
+    }
 
     public Income(int larvaPerSec, int mineralPerSec, int gasPerSec) {
         this.larvaPerSec = larvaPerSec;
         this.mineralPerSec = mineralPerSec;
         this.gasPerSec = gasPerSec;
+    }
+
+    public void add(Income other) {
+        this.larvaPerSec += other.larvaPerSec;
+        this.mineralPerSec += other.mineralPerSec;
+        this.gasPerSec += other.gasPerSec;
+    }
+
+    public void remove(Income other) {
+        this.larvaPerSec -= other.larvaPerSec;
+        this.mineralPerSec -= other.mineralPerSec;
+        this.gasPerSec -= other.gasPerSec;
+    }
+
+    public void assertNonNegative() {
+        if (larvaPerSec < 0 || mineralPerSec < 0 || gasPerSec < 0) {
+            throw new IllegalStateException("Income cannot be negative");
+        }
     }
 
     public int getLarvaPerSec() {
@@ -46,4 +65,5 @@ public class Income {
                 ", gasPerSec=" + gasPerSec +
                 '}';
     }
+
 }

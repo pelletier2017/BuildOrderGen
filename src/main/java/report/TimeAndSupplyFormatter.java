@@ -1,16 +1,29 @@
 package report;
 
-import buildorder.ListBuildOrder;
+import buildorder.BuildOrder;
+import buildorder.BuildOrderStep;
+import support.TimeFormat;
 
-/*
-Orders the build order step with time stamp, supply, and unit to build
-[0:12] (9/10) roach
- */
+import java.util.List;
+
 public class TimeAndSupplyFormatter implements Formatter {
 
     @Override
-    public String format(ListBuildOrder gameState) {
-        // TODO once ListBuildOrder is ready
-        return null;
+    public String format(BuildOrder buildOrder) {
+        StringBuilder builder = new StringBuilder();
+        builder.append("Build Order:\n");
+        List<BuildOrderStep> steps = buildOrder.steps();
+
+        for (BuildOrderStep step : steps) {
+            String message = String.format("%s %s/%s %s\n",
+                    TimeFormat.formattedSeconds(step.getTime()),
+                    step.getSupply(),
+                    step.getSupplyCap(),
+                    step.getGameUnit().getName());
+            builder.append(message);
+        }
+        builder.append("-----------------------\n");
+        return builder.toString();
     }
+
 }

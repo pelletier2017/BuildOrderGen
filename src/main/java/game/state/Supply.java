@@ -11,6 +11,10 @@ public class Supply {
     }
 
     public Supply(int cost, int cap) {
+        if (cost > cap) {
+            throw new IllegalArgumentException("Cannot have supply greater than cap");
+        }
+
         this.cost = cost;
         this.cap = cap;
     }
@@ -20,6 +24,14 @@ public class Supply {
     }
     public int getCap() {
         return cap;
+    }
+
+    public void setCost(int cost) {
+        this.cost = cost;
+    }
+
+    public void setCap(int cap) {
+        this.cap = cap;
     }
 
     public void add(Supply other) {

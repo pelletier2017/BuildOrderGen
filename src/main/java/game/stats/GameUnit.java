@@ -5,7 +5,7 @@ import game.state.Supply;
 /*
 Goal is to read this from JSON
  */
-public class GameUnit {
+public class GameUnit implements Comparable<GameUnit> {
 
     private String name;
     private Cost cost;
@@ -66,12 +66,11 @@ public class GameUnit {
 
     @Override
     public String toString() {
-        return "GameUnit{" +
-                "name='" + name + '\'' +
-                ", cost=" + cost +
-                ", income=" + income +
-                ", supply=" + supply +
-                ", creation=" + creation +
-                '}';
+        return name;
+    }
+
+    @Override
+    public int compareTo(GameUnit other) {
+        return Integer.compare(this.getCost().getMinerals(), other.getCost().getMinerals());
     }
 }

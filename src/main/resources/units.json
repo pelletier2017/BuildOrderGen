@@ -1,0 +1,70 @@
+[ {
+  "name" : "drone",
+  "cost" : {
+    "minerals" : 50,
+    "gas" : 0,
+    "unitCreating" : "larva",
+    "willReturnUnitAfter" : false
+  },
+  "income" : {
+    "larvaPerSec" : 0,
+    "mineralPerSec" : 5,
+    "gasPerSec" : 0
+  },
+  "supply" : {
+    "cost" : 1,
+    "cap" : 0
+  },
+  "creation" : {
+    "timeDelay" : 5,
+    "unitCreatedFrom" : "larva",
+    "willReturnUnit" : false,
+    "technologyRequired" : [ ]
+  }
+}, {
+  "name" : "overlord",
+  "cost" : {
+    "minerals" : 100,
+    "gas" : 0,
+    "unitCreating" : null,
+    "willReturnUnitAfter" : false
+  },
+  "income" : {
+    "larvaPerSec" : 0,
+    "mineralPerSec" : 0,
+    "gasPerSec" : 0
+  },
+  "supply" : {
+    "cost" : 0,
+    "cap" : 8
+  },
+  "creation" : {
+    "timeDelay" : 7,
+    "unitCreatedFrom" : "larva",
+    "willReturnUnit" : false,
+    "technologyRequired" : [ ]
+  }
+}, {
+  "name" : "hatchery",
+  "cost" : {
+    "minerals" : 300,
+    "gas" : 0,
+    "unitCreating" : null,
+    "willReturnUnitAfter" : false
+  },
+  "income" : {
+    "larvaPerSec" : 1,
+    "mineralPerSec" : 0,
+    "gasPerSec" : 0
+  },
+  "supply" : {
+    "cost" : 0,
+    "cap" : 7
+  },
+  "creation" : {
+    "timeDelay" : 7,
+    "unitCreatedFrom" : "larva",
+    "willReturnUnit" : false,
+    "technologyRequired" : [ ]
+  }
+} ]

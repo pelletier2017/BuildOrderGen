@@ -2,7 +2,6 @@ package game.state;
 
 import game.stats.GameUnit;
 import game.stats.Income;
-import game.stats.Race;
 
 import java.util.*;
 
@@ -13,42 +12,36 @@ those stats should be kept track of with additions/substractions so no iterating
  */
 public class UnitCollection {
 
-    private Map<GameUnit, Integer> unitMap;
+    private Map<GameUnit, Integer> unitMap = new HashMap<>();
 
     private Supply supply = new Supply();
-    private Income income;
+    private Income income = new Income();
 
-    public UnitCollection() {
-        this.unitMap = new HashMap<>();
-    }
-
-    public void addUnit(GameUnit gameUnit, int count) {
+    public void add(GameUnit gameUnit, int count) {
         for (int i = 0; i < count; i++) {
-            addUnit(gameUnit);
+            add(gameUnit);
         }
     }
 
-    public void addUnit(GameUnit gameUnit) {
-        // TODO this is wordy, gameUnit.getSupply()
+    public void add(GameUnit gameUnit) {
         verifyCanAdd(gameUnit);
         doAdd(gameUnit);
     }
 
     public void removeUnit(GameUnit gameUnit) {
-        supply.remove(gameUnit.getSupply());
-
         int originalCount = unitMap.getOrDefault(gameUnit, 0);
         if (originalCount <= 0) {
             throw new IllegalArgumentException("cannot remove unit, there are none");
         }
 
+        supply.remove(gameUnit.getSupply());
+        income.remove(gameUnit.getIncome());
         unitMap.put(gameUnit, originalCount - 1);
     }
 
     private void doAdd(GameUnit gameUnit) {
         supply.add(gameUnit.getSupply());
-
-        // TODO add to income
+        income.add(gameUnit.getIncome());
 
         int newCount = unitMap.getOrDefault(gameUnit, 0) + 1;
         unitMap.put(gameUnit, newCount);
@@ -60,4 +53,51 @@ public class UnitCollection {
         }
     }
 
+    public Income getIncome() {
+        return income;
+    }
+
+    public List<GameUnit> unitList() {
+        List<GameUnit> units = new ArrayList<>();
+        for (Map.Entry<GameUnit, Integer> entry : unitMap.entrySet()) {
+            GameUnit unit = entry.getKey();
+            int count = entry.getValue();
+            if (count > 0) {
+                units.add(unit);
+            }
+        }
+        Collections.sort(units);
+        return units;
+    }
+
+    public boolean contains(UnitCollection other) {
+        for (Map.Entry<GameUnit, Integer> entry : unitMap.entrySet()) {
+            GameUnit unit = entry.getKey();
+            int thisCount = entry.getValue();
+            int otherCount = other.unitMap.get(unit);
+
+            if (thisCount < otherCount) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    // TODO this should be getSupply and getSupplyCost maybe
+    public Supply getSupply() {
+        return supply;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        UnitCollection that = (UnitCollection) o;
+        return Objects.equals(unitMap, that.unitMap);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(unitMap);
+    }
 }

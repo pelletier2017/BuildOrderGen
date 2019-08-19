@@ -35,6 +35,8 @@ public class ZergUnits {
 
         List<GameUnit> gameUnits = JsonUtils.readUnits();
         for (GameUnit gameUnit : gameUnits) {
+
+            // units
             if (gameUnit.getName().equals("drone")) {
                 drone = gameUnit;
             }
@@ -57,6 +59,7 @@ public class ZergUnits {
                 mutalisk = gameUnit;
             }
 
+            // buildings
             if (gameUnit.getName().equals("hatchery")) {
                 hatchery = gameUnit;
             }
@@ -77,9 +80,9 @@ public class ZergUnits {
 
     public static UnitCollection initialCollection() {
         UnitCollection collection = new UnitCollection();
-        collection.addUnit(hatchery);
-        collection.addUnit(overlord);
-        collection.addUnit(drone, 12);
+        collection.add(hatchery);
+        collection.add(overlord);
+        collection.add(drone, 12);
         return collection;
     }
 

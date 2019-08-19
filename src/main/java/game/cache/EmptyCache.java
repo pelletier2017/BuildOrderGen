@@ -12,4 +12,9 @@ public class EmptyCache implements GameStateCache {
     @Override
     public void add(GameState gameState) {
     }
+
+    @Override
+    public int size() {
+        return 0;
+    }
 }

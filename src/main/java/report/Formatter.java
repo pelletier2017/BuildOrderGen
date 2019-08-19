@@ -1,7 +1,7 @@
 package report;
 
-import buildorder.ListBuildOrder;
+import buildorder.BuildOrder;
 
 public interface Formatter {
-    String format(ListBuildOrder gameState);
+    String format(BuildOrder gameState);
 }

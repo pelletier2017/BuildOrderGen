@@ -10,7 +10,7 @@ import java.util.List;
 
 public class JsonUtils {
 
-    private static final String TEST_JSON_PATH = "src/main/resources/test.json";
+    private static final String TEST_JSON_PATH = "src/main/resources/units.json";
     private static final ObjectMapper mapper = new ObjectMapper();
 
     public static List<GameUnit> readUnits(String path) {

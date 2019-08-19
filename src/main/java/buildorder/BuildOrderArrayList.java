@@ -5,14 +5,14 @@ import game.stats.GameUnit;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ListBuildOrder implements BuildOrder {
+public class BuildOrderArrayList implements BuildOrder {
     private List<BuildOrderStep> steps = new ArrayList<>();
 
     @Override
-    public void addStep(int time, GameUnit gameUnit) {
+    public void addStep(int time, GameUnit gameUnit, int supply, int supplyCap) {
         // TODO potential slowdown by creating an object every iteration
         // Possible to allocate an array and re-use it throughout the searches
-        steps.add(new BuildOrderStep(time, gameUnit));
+        steps.add(new BuildOrderStep(time, gameUnit, supply, supplyCap));
     }
 
     @Override
@@ -26,6 +26,18 @@ public class ListBuildOrder implements BuildOrder {
     @Override
     public int timeOfLastStep() {
         return steps.get(steps.size() - 1).getTime();
+    }
+
+    @Override
+    public List<BuildOrderStep> steps() {
+        return steps;
+    }
+
+    @Override
+    public BuildOrder copy() {
+        BuildOrderArrayList buildOrderArrayList = new BuildOrderArrayList();
+        buildOrderArrayList.steps = new ArrayList<>(this.steps);
+        return buildOrderArrayList;
     }
 
     @Override
