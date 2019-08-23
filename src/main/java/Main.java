@@ -1,7 +1,11 @@
 import game.cache.GameStateCache;
 import game.cache.HashSetCache;
 import game.state.GameState;
+import game.state.GameStates;
 import game.state.UnitCollection;
+import game.stats.GameUnit;
+import game.timeline.SimpleTimeline;
+import game.timeline.Timeline;
 import game.units.ZergUnits;
 import generator.BuildOrderGenerator;
 import report.BuildOrderReporter;
@@ -13,18 +17,18 @@ public class Main {
         // sets up units statically, maybe better to not do it statically
         ZergUnits.initializeFromJson();
 
-        GameState initialZergState = GameState.initialZerg();
+        GameState initialZergState = GameStates.initialZerg();
 
         UnitCollection desiredUnits = new UnitCollection();
         desiredUnits.add(ZergUnits.getHatchery());
-        desiredUnits.add(ZergUnits.getOverlord(), 2);
-        desiredUnits.add(ZergUnits.getDrone(), 18);
+        desiredUnits.add(ZergUnits.getOverlord(), 1);
+        desiredUnits.add(ZergUnits.getDrone(), 13);
 
         BuildOrderReporter reporter = new BuildOrderReporter(new TimeAndSupplyFormatter(), System.out);
 
         GameStateCache cache = new HashSetCache();
 
-        BuildOrderGenerator generator = new BuildOrderGenerator(initialZergState, desiredUnits, reporter, cache, 10);
+        BuildOrderGenerator generator = new BuildOrderGenerator(initialZergState, desiredUnits, reporter, cache,30);
         generator.search();
 
     }

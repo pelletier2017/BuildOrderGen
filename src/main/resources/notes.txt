@@ -21,6 +21,9 @@ Timeout where it will stop calculating after X time and give best result so far
 5)
 Add ability to require units at certain times ex "start speed by 2:00", "start 1 pair zerglings by 1:30"
 
+Nice-To-Have:
+Facade pattern around the BuildOrderGenerator that uses the "best" components so far
+
 Speed:
 - maybe building attacking units before more workers will never be optimal (eco phase, military phase)
     - isEco flag in JSON

@@ -4,6 +4,7 @@ import game.stats.GameUnit;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class ReusedBuildOrderArrayList implements BuildOrder {
     private static final int MAX_NUM_STEPS = 100;
@@ -34,10 +35,10 @@ public class ReusedBuildOrderArrayList implements BuildOrder {
 
     @Override
     public void popStep() {
-        if (currentNumSteps == 0) {
+        currentNumSteps--;
+        if (currentNumSteps < 0) {
             throw new IllegalStateException("cannot pop from empty list");
         }
-        currentNumSteps--;
     }
 
     @Override
@@ -64,5 +65,18 @@ public class ReusedBuildOrderArrayList implements BuildOrder {
             return true;
         }
         return this.timeOfLastStep() < other.timeOfLastStep();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof BuildOrder)) return false;
+        BuildOrder that = (BuildOrder) o;
+        return this.steps().equals(that.steps());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(steps, currentNumSteps);
     }
 }

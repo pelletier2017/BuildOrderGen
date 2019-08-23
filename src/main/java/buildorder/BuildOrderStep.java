@@ -2,6 +2,8 @@ package buildorder;
 
 import game.stats.GameUnit;
 
+import java.util.Objects;
+
 public class BuildOrderStep {
     private int time;
     private GameUnit gameUnit;
@@ -49,5 +51,21 @@ public class BuildOrderStep {
 
     public void setSupplyCap(int supplyCap) {
         this.supplyCap = supplyCap;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        BuildOrderStep that = (BuildOrderStep) o;
+        return time == that.time &&
+                supply == that.supply &&
+                supplyCap == that.supplyCap &&
+                gameUnit.equals(that.gameUnit);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(time, gameUnit, supply, supplyCap);
     }
 }

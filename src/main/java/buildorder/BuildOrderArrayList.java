@@ -4,6 +4,7 @@ import game.stats.GameUnit;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class BuildOrderArrayList implements BuildOrder {
     private List<BuildOrderStep> steps = new ArrayList<>();
@@ -46,5 +47,19 @@ public class BuildOrderArrayList implements BuildOrder {
             return true;
         }
         return this.timeOfLastStep() < other.timeOfLastStep();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        // instanceof BuildOrder because the two implementations are equivalent except for implementation details
+        if (!(o instanceof BuildOrder)) return false;
+        BuildOrder that = (BuildOrder) o;
+        return steps().equals(that.steps());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(steps);
     }
 }

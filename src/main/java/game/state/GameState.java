@@ -5,6 +5,8 @@ import buildorder.ReusedBuildOrderArrayList;
 import game.stats.Cost;
 import game.stats.GameUnit;
 import game.stats.Income;
+import game.timeline.SimpleTimeline;
+import game.timeline.Timeline;
 import game.units.ZergUnits;
 
 import java.util.Objects;
@@ -12,27 +14,30 @@ import java.util.Objects;
 public class GameState {
 
     private int secondsInGame;
-    private UnitCollection units;
-
     private int minerals;
     private int gas;
 
+    private UnitCollection units;
     private BuildOrder buildOrder;
+    private Timeline<GameUnit> timeline;
 
-    public GameState(UnitCollection units) {
-        this(0, 50, 0, units);
+    public GameState(UnitCollection units, BuildOrder buildOrder, Timeline<GameUnit> timeline) {
+        this(0, 50, 0, units, buildOrder, timeline);
     }
 
-    public GameState(int secondsInGame, int minerals, int gas, UnitCollection units) {
+    public GameState(int secondsInGame, int minerals, int gas, UnitCollection units, BuildOrder buildOrder, Timeline<GameUnit> timeline) {
         this.secondsInGame = secondsInGame;
-        this.units = units;
-        this.buildOrder = new ReusedBuildOrderArrayList();
         this.minerals = minerals;
         this.gas = gas;
+
+        this.units = units;
+        this.buildOrder = buildOrder;
+        this.timeline = timeline;
     }
 
     public void nextSecond() {
         secondsInGame++;
+        timeline.nextMoment();
 
         Income income = units.getIncome();
         minerals += income.getMineralPerSec();
@@ -41,6 +46,7 @@ public class GameState {
 
     public void lastSecond() {
         secondsInGame--;
+        timeline.previousMoment();
 
         Income income = units.getIncome();
         minerals -= income.getMineralPerSec();
@@ -87,10 +93,6 @@ public class GameState {
     public boolean isBefore(GameState other) {
         return this.secondsInGame < other.secondsInGame;
     }
-//    public GameState deepCopy() {
-//        return new GameState(secondsInGame, new Supply(supply.getCost(), supply.getCap()), unitCollection.copy());
-
-//    }
 
     public boolean satisfiesDesired(UnitCollection desiredUnits) {
         return this.units.contains(desiredUnits);
@@ -98,11 +100,6 @@ public class GameState {
 
     public BuildOrder buildOrder() {
         return buildOrder;
-    }
-
-    public static GameState initialZerg() {
-        UnitCollection collection = ZergUnits.initialCollection();
-        return new GameState(collection);
     }
 
     public int getSecondsInGame() {

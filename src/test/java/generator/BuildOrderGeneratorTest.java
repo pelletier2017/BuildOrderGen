@@ -1,45 +1,62 @@
 package generator;
 
+import buildorder.BuildOrder;
+import buildorder.BuildOrderArrayList;
 import game.cache.EmptyCache;
 import game.cache.GameStateCache;
 import game.cache.HashSetCache;
 import game.state.GameState;
+import game.state.GameStates;
 import game.state.UnitCollection;
 import game.units.ZergUnits;
 import org.junit.Test;
 import report.BuildOrderReporter;
 import report.TimeAndSupplyFormatter;
 
+import static junit.framework.TestCase.assertEquals;
+
 /*
 These timed tests are flaky and shouldn't be relied on with a high degree of accuracy.
  */
 public class BuildOrderGeneratorTest {
 
-    // 0.120 sec
     @Test
     public void testHashSetCache() {
-        simpleTest(new HashSetCache(), 100);
+        BuildOrder buildOrder = smallTest(new HashSetCache());
+        BuildOrder expected = smallTestExpected();
+        assertEquals(expected, buildOrder);
     }
 
-    // 1.7 seconds
     @Test
     public void testEmptyCache() {
-        simpleTest(new EmptyCache(), 10);
+        BuildOrder buildOrder = smallTest(new EmptyCache());
+        BuildOrder expected = smallTestExpected();
+        assertEquals(expected, buildOrder);
     }
 
-    private void simpleTest(GameStateCache cache, int secondsToSearch) {
+    private BuildOrder smallTest(GameStateCache cache) {
         ZergUnits.initializeFromJson();
 
-        GameState initialZergState = GameState.initialZerg();
+        int secondsToSearch = 8;
+        GameState initialZergState = GameStates.initialZerg();
 
         UnitCollection desiredUnits = new UnitCollection();
         desiredUnits.add(ZergUnits.getHatchery());
-        desiredUnits.add(ZergUnits.getOverlord(), 2);
-        desiredUnits.add(ZergUnits.getDrone(), 18);
+        desiredUnits.add(ZergUnits.getOverlord(), 1);
+        desiredUnits.add(ZergUnits.getDrone(), 14);
 
         BuildOrderReporter reporter = new BuildOrderReporter(new TimeAndSupplyFormatter(), System.out);
 
         BuildOrderGenerator generator = new BuildOrderGenerator(initialZergState, desiredUnits, reporter, cache, secondsToSearch);
         generator.search();
+
+        return reporter.lastBuildOrder();
+    }
+
+    private BuildOrder smallTestExpected() {
+        BuildOrder buildOrder = new BuildOrderArrayList();
+        buildOrder.addStep(0, ZergUnits.getDrone(), 13, 15);
+        buildOrder.addStep(0, ZergUnits.getDrone(), 14, 15);
+        return buildOrder;
     }
 }

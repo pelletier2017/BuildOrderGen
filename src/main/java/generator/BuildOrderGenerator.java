@@ -5,6 +5,7 @@ import game.cache.GameStateCache;
 import game.state.GameState;
 import game.state.UnitCollection;
 import game.stats.GameUnit;
+import game.timeline.Timeline;
 import report.BuildOrderReporter;
 
 import java.util.List;
@@ -15,7 +16,8 @@ public class BuildOrderGenerator {
     private UnitCollection desiredUnitCollection;
     private List<GameUnit> unitChoices;
     private GameStateCache gameStateCache;
-    private int secondsToSearch;
+    private Timeline<GameUnit> timeline;
+    private int gameSecondsToSearch;
 
     private BuildOrderReporter reporter;
 
@@ -24,13 +26,13 @@ public class BuildOrderGenerator {
 
     private static final int MAX_SECONDS_WAITING = 10;
 
-    public BuildOrderGenerator(GameState initialState, UnitCollection desiredUnitCollection, BuildOrderReporter reporter, GameStateCache gameStateCache, int secondsToSearch) {
+    public BuildOrderGenerator(GameState initialState, UnitCollection desiredUnitCollection, BuildOrderReporter reporter, GameStateCache gameStateCache, int gameSecondsToSearch) {
         this.desiredUnitCollection = desiredUnitCollection;
         this.unitChoices = desiredUnitCollection.unitList();
         this.reporter = reporter;
         this.gameStateCache = gameStateCache;
         this.currentState = initialState;
-        this.secondsToSearch = secondsToSearch;
+        this.gameSecondsToSearch = gameSecondsToSearch;
 
         this.bestBuildOrder = null;
         this.waitsInARow = 0;
@@ -49,21 +51,17 @@ public class BuildOrderGenerator {
 
     private void searchRecurs() {
         // TODO add check to see if time has passed time limit for program
-
-        if (waitsInARow > MAX_SECONDS_WAITING || currentState.getSecondsInGame() > secondsToSearch) {
-            return;
-        }
-
-        if (gameStateCache.contains(currentState)) {
-            return;
-        }
-        gameStateCache.add(currentState);
         pathsChecked++;
 
-        if (currentState.satisfiesDesired(desiredUnitCollection)) {
-            updateBestBuildOrder();
+        if (pathShouldEnd()) {
             return;
         }
+
+        // check waiting first, so that it can cut paths that wait too long
+        currentState.nextSecond();
+        waitsInARow++;
+        searchRecurs();
+        currentState.lastSecond();
 
         for (GameUnit gameUnit : unitChoices) {
             if (currentState.canAfford(gameUnit)) {
@@ -73,16 +71,38 @@ public class BuildOrderGenerator {
                 currentState.undoUnit(gameUnit);
             }
         }
+    }
 
-        currentState.nextSecond();
-        waitsInARow++;
-        searchRecurs();
-        currentState.lastSecond();
+    private boolean pathShouldEnd() {
+        if (currentState.satisfiesDesired(desiredUnitCollection)) {
+            updateBestBuildOrder();
+            return true;
+        }
+
+        // waiting too long will never be efficient
+        // possible that rare cases like saving larva for many roaches could involve waiting but unlikely
+        if (waitsInARow > MAX_SECONDS_WAITING) {
+            return true;
+        }
+
+        // can't search tree infinitely deep
+        if (currentState.getSecondsInGame() > gameSecondsToSearch) {
+            return true;
+        }
+
+        // state seen before
+        if (gameStateCache.contains(currentState)) {
+            return true;
+        }
+        gameStateCache.add(currentState);
+
+        return false;
     }
 
     private void updateBestBuildOrder() {
         BuildOrder currentBuildOrder = currentState.buildOrder();
         if (currentBuildOrder.endsBefore(bestBuildOrder)) {
+            // copy because BuildOrder is mutable
             bestBuildOrder = currentBuildOrder.copy();
             reporter.report(bestBuildOrder);
         }

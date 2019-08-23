@@ -1,7 +1,12 @@
 package game.cache;
 
+import buildorder.BuildOrder;
+import buildorder.ReusedBuildOrderArrayList;
 import game.state.GameState;
 import game.state.UnitCollection;
+import game.stats.GameUnit;
+import game.timeline.SimpleTimeline;
+import game.timeline.Timeline;
 import game.units.ZergUnits;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -15,13 +20,21 @@ public class HashSetCacheTest {
         ZergUnits.initializeFromJson();
     }
 
+    private BuildOrder buildOrder() {
+        return new ReusedBuildOrderArrayList();
+    }
+
+    private Timeline<GameUnit> timeline() {
+        return new SimpleTimeline<>();
+    }
+
     @Test
     public void testSingle() {
         UnitCollection collection = new UnitCollection();
         collection.add(ZergUnits.getOverlord(), 3);
         collection.add(ZergUnits.getDrone(), 10);
 
-        GameState gameState = new GameState(collection);
+        GameState gameState = new GameState(collection, buildOrder(), timeline());
 
         GameStateCache cache = new HashSetCache();
         cache.add(gameState);
@@ -36,8 +49,11 @@ public class HashSetCacheTest {
         collectionA.add(ZergUnits.getOverlord(), 3);
         collectionA.add(ZergUnits.getDrone(), 10);
 
-        GameState gameStateA = new GameState(collectionA);
-        GameState gameStateB = new GameState(collectionA);
+        BuildOrder buildOrder = new ReusedBuildOrderArrayList();
+        Timeline<GameUnit> gameUnitTimeline = new SimpleTimeline<>();
+
+        GameState gameStateA = new GameState(collectionA, buildOrder(), timeline());
+        GameState gameStateB = new GameState(collectionA, buildOrder(), timeline());
         GameStateCache cache = new HashSetCache();
 
         cache.add(gameStateA);
@@ -54,7 +70,7 @@ public class HashSetCacheTest {
         collectionA.add(ZergUnits.getOverlord(), 3);
         collectionA.add(ZergUnits.getDrone(), 10);
 
-        GameState gameStateA = new GameState(collectionA);
+        GameState gameStateA = new GameState(collectionA, buildOrder(), timeline());
         GameStateCache cache = new HashSetCache();
 
         cache.add(gameStateA);
@@ -80,8 +96,8 @@ public class HashSetCacheTest {
         collectionB.add(ZergUnits.getOverlord(), 3);
         collectionB.add(ZergUnits.getDrone(), 10);
 
-        GameState gameStateA = new GameState(collectionA);
-        GameState gameStateB = new GameState(collectionB);
+        GameState gameStateA = new GameState(collectionA, buildOrder(), timeline());
+        GameState gameStateB = new GameState(collectionB, buildOrder(), timeline());
         GameStateCache cache = new HashSetCache();
 
         cache.add(gameStateA);
@@ -99,7 +115,7 @@ public class HashSetCacheTest {
         collection.add(ZergUnits.getOverlord(), 3);
         collection.add(ZergUnits.getDrone(), 10);
 
-        GameState gameState = new GameState(collection);
+        GameState gameState = new GameState(collection, buildOrder(), timeline());
         GameStateCache cache = new HashSetCache();
 
         cache.add(gameState);
@@ -114,7 +130,7 @@ public class HashSetCacheTest {
         collection.add(ZergUnits.getOverlord(), 3);
         collection.add(ZergUnits.getDrone(), 10);
 
-        GameState gameState = new GameState(collection);
+        GameState gameState = new GameState(collection, buildOrder(), timeline());
         GameStateCache cache = new HashSetCache();
 
         cache.add(gameState);
